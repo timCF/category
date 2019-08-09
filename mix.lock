@@ -1,0 +1,4 @@
+%{
+  "calculus": {:hex, :calculus, "0.1.0", "3f7c664aedd16d90ec32b96708e03ca02430a3857b4b66cceb9a81b181c741af", [:mix], [], "hexpm"},
+  "kare": {:hex, :kare, "1.0.0", "bc3b0509abce31061e7062304bf63ad7a72f45ebd482cfe29c18c9a1706186a4", [:mix], [], "hexpm"},
+}
