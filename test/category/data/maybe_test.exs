@@ -7,108 +7,76 @@ defmodule Category.Data.MaybeTest do
     {:ok, %{just: Maybe.just(1), nothing: Maybe.nothing()}}
   end
 
-  test "constructors", %{just: just, nothing: nothing} do
-    assert Maybe.is?(just)
-    assert Maybe.is?(nothing)
+  test "constructors", %{just: j, nothing: n} do
+    assert Maybe.is?(j)
+    assert Maybe.is?(n)
   end
 
-  test "checkers", %{just: just, nothing: nothing} do
-    assert Maybe.is_just?(just)
-    assert Maybe.is_nothing?(nothing)
+  test "checkers", %{just: j, nothing: n} do
+    assert Maybe.is_just?(j)
+    assert Maybe.is_nothing?(n)
 
-    refute Maybe.is_just?(nothing)
-    refute Maybe.is_nothing?(just)
+    refute Maybe.is_just?(n)
+    refute Maybe.is_nothing?(j)
   end
 
-  test "fetch", %{just: just, nothing: nothing} do
-    assert 1 == Maybe.fetch(just)
-    assert nil == Maybe.fetch(nothing)
+  test "fetch", %{just: j, nothing: n} do
+    assert 1 == Maybe.fetch(j)
+    assert nil == Maybe.fetch(n)
   end
 
-  test "fetch!", %{just: just, nothing: nothing} do
-    assert 1 == Maybe.fetch!(just)
+  test "fetch!", %{just: j, nothing: n} do
+    assert 1 == Maybe.fetch!(j)
 
     assert_raise RuntimeError,
                  "Can't fetch from Category.Data.Maybe.nothing",
                  fn ->
-                   Maybe.fetch!(nothing)
+                   Maybe.fetch!(n)
                  end
   end
 
-  test "fmap just", %{just: j0} do
-    assert Maybe.is?(j0)
-    assert 1 == Maybe.fetch!(j0)
-
-    j1 = Functor.fmap(&(&1 * 3), j0)
-    assert Maybe.is?(j1)
-    assert 3 == Maybe.fetch!(j1)
-
-    j2 = Functor.fmap(fn _ -> :hello end, j1)
-    assert Maybe.is?(j2)
-    assert :hello == Maybe.fetch!(j2)
+  test "fmap just", %{just: j} do
+    x = (&(&1 * 3)) <|> j
+    assert 3 == Maybe.fetch!(x)
   end
 
-  test "fmap nothing", %{nothing: n0} do
-    assert Maybe.is_nothing?(n0)
+  test "fmap nothing", %{nothing: n} do
+    x0 = (&(&1 * 3)) <|> n
+    assert Maybe.is_nothing?(x0)
 
-    n1 = Functor.fmap(&(&1 * 3), n0)
-    assert Maybe.is_nothing?(n1)
-
-    n2 = Functor.fmap(fn _ -> :hello end, n1)
-    assert Maybe.is_nothing?(n2)
-
-    n3 = Functor.fmap(fn _ -> raise("BANG!!!") end, n1)
-    assert Maybe.is_nothing?(n3)
+    x1 = fn _ -> raise("BANG!!!") end <|> n
+    assert Maybe.is_nothing?(x1)
   end
 
-  test "bind just", %{just: j0} do
-    assert Maybe.is?(j0)
-    assert 1 == Maybe.fetch!(j0)
+  test "bind just", %{just: j} do
+    x0 = j ~>> (&Maybe.just(&1 * 3))
+    assert 3 == Maybe.fetch!(x0)
 
-    j1 = Monad.bind(j0, &Maybe.just(&1 * 3))
-    assert Maybe.is?(j1)
-    assert 3 == Maybe.fetch!(j1)
-
-    j2 = Monad.bind(j1, fn _ -> Maybe.nothing() end)
-    assert Maybe.is?(j2)
-    assert Maybe.is_nothing?(j2)
+    x1 = j ~>> fn _ -> Maybe.nothing() end
+    assert Maybe.is_nothing?(x1)
   end
 
-  test "bind nothing", %{nothing: n0} do
-    assert Maybe.is_nothing?(n0)
+  test "bind nothing", %{nothing: n} do
+    x0 = n ~>> (&Maybe.just(&1 * 3))
+    assert Maybe.is_nothing?(x0)
 
-    n1 = Monad.bind(n0, &Maybe.just(&1 * 3))
-    assert Maybe.is_nothing?(n1)
-
-    n2 = Monad.bind(n1, fn _ -> Maybe.just(:hello) end)
-    assert Maybe.is_nothing?(n2)
-
-    n3 = Monad.bind(n1, fn _ -> raise("BANG!!!") end)
-    assert Maybe.is_nothing?(n3)
+    x1 = n ~>> fn _ -> raise("BANG!!!") end
+    assert Maybe.is_nothing?(x1)
   end
 
-  test "ap just", %{just: j0} do
-    j1 =
-      (&Kernel.+/2)
-      |> Functor.fmap(j0)
-      |> Applicative.ap(j0)
-
-    assert 2 == Maybe.fetch!(j1)
+  test "ap just", %{just: j} do
+    x = (&Kernel.+/2) <|> j <~> j
+    assert 2 == Maybe.fetch!(x)
   end
 
   test "ap just + nothing", %{just: j, nothing: n} do
-    x0 =
-      (&Kernel.+/2)
-      |> Functor.fmap(n)
-      |> Applicative.ap(j)
-
+    x0 = (&Kernel.+/2) <|> n <~> j
     assert Maybe.is_nothing?(x0)
 
-    x1 =
-      (&Kernel.+/2)
-      |> Functor.fmap(j)
-      |> Applicative.ap(n)
-
+    x1 = (&Kernel.+/2) <|> j <~> n
     assert Maybe.is_nothing?(x1)
+
+    x2 = (&Kernel.+/2) <|> n <~> n
+    assert Maybe.is_nothing?(x2)
   end
 end

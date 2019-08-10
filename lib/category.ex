@@ -7,10 +7,10 @@ defmodule Category do
   @opaque b :: __MODULE__.b()
   @opaque t(x) :: __MODULE__.t(x)
 
-  defmacro __using__(_) do
+  defmacro __using__(opts) do
     quote location: :keep do
       use Category.Data
-      use Category.TypeClass
+      use Category.TypeClass, unquote(opts)
     end
   end
 end

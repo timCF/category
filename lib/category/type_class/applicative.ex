@@ -1,4 +1,7 @@
 defmodule Category.TypeClass.Applicative do
+  import Category.TypeClass
+  define_using()
+
   @typep a :: Category.a()
   @typep b :: Category.b()
   @typep t(x) :: Category.t(x)
@@ -6,18 +9,19 @@ defmodule Category.TypeClass.Applicative do
   @callback applicative_ap(t((a -> b)), t(a)) :: t(b)
 
   defmacro ap(mf, it) do
-    quote location: :keep, bind_quoted: [it: it, mf: mf] do
+    quote location: :keep do
+      it = unquote(it)
       {:module, mod} = :erlang.fun_info(it, :module)
 
       (&Kare.curry/1)
-      |> Category.TypeClass.Functor.fmap(mf)
+      |> Category.TypeClass.Functor.fmap(unquote(mf))
       |> mod.applicative_ap(it)
     end
   end
 
   defmacro f <~> it do
-    quote location: :keep, bind_quoted: [it: it, f: f] do
-      unquote(__MODULE__).ap(f, it)
+    quote location: :keep do
+      unquote(__MODULE__).ap(unquote(f), unquote(it))
     end
   end
 end
