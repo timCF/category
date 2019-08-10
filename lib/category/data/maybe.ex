@@ -83,7 +83,7 @@ defmodule Category.Data.Maybe do
 
   @behaviour Functor
   @impl true
-  def functor_fmap(it, f), do: it |> eval({:functor_fmap, f})
+  def functor_fmap(f, it), do: it |> eval({:functor_fmap, f})
 
   @behaviour Monad
   @impl true

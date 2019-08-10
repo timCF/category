@@ -39,11 +39,11 @@ defmodule Category.Data.MaybeTest do
     assert Maybe.is?(j0)
     assert 1 == Maybe.fetch!(j0)
 
-    j1 = Functor.fmap(j0, &(&1 * 3))
+    j1 = Functor.fmap(&(&1 * 3), j0)
     assert Maybe.is?(j1)
     assert 3 == Maybe.fetch!(j1)
 
-    j2 = Functor.fmap(j1, fn _ -> :hello end)
+    j2 = Functor.fmap(fn _ -> :hello end, j1)
     assert Maybe.is?(j2)
     assert :hello == Maybe.fetch!(j2)
   end
@@ -51,13 +51,13 @@ defmodule Category.Data.MaybeTest do
   test "fmap nothing", %{nothing: n0} do
     assert Maybe.is_nothing?(n0)
 
-    n1 = Functor.fmap(n0, &(&1 * 3))
+    n1 = Functor.fmap(&(&1 * 3), n0)
     assert Maybe.is_nothing?(n1)
 
-    n2 = Functor.fmap(n1, fn _ -> :hello end)
+    n2 = Functor.fmap(fn _ -> :hello end, n1)
     assert Maybe.is_nothing?(n2)
 
-    n3 = Functor.fmap(n1, fn _ -> raise("BANG!!!") end)
+    n3 = Functor.fmap(fn _ -> raise("BANG!!!") end, n1)
     assert Maybe.is_nothing?(n3)
   end
 
@@ -90,37 +90,25 @@ defmodule Category.Data.MaybeTest do
   test "ap just", %{just: j0} do
     j1 =
       (&Kernel.+/2)
-      |> Maybe.just()
-      |> Applicative.ap(j0)
+      |> Functor.fmap(j0)
       |> Applicative.ap(j0)
 
     assert 2 == Maybe.fetch!(j1)
   end
 
-  test "ap just + nothing", %{just: just, nothing: nothing} do
+  test "ap just + nothing", %{just: j, nothing: n} do
     x0 =
       (&Kernel.+/2)
-      |> Maybe.just()
-      |> Applicative.ap(nothing)
-      |> Applicative.ap(just)
+      |> Functor.fmap(n)
+      |> Applicative.ap(j)
 
     assert Maybe.is_nothing?(x0)
 
     x1 =
       (&Kernel.+/2)
-      |> Maybe.just()
-      |> Applicative.ap(just)
-      |> Applicative.ap(nothing)
+      |> Functor.fmap(j)
+      |> Applicative.ap(n)
 
     assert Maybe.is_nothing?(x1)
-  end
-
-  test "can combine ap with fmap", %{just: just, nothing: nothing} do
-    x0 =
-      nothing
-      |> Functor.fmap(&Kernel.+/2)
-      |> Applicative.ap(just)
-
-    assert Maybe.is_nothing?(x0)
   end
 end

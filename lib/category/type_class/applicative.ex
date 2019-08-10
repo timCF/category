@@ -9,8 +9,8 @@ defmodule Category.TypeClass.Applicative do
     quote location: :keep, bind_quoted: [it: it, mf: mf] do
       {:module, mod} = :erlang.fun_info(it, :module)
 
-      mf
-      |> Category.TypeClass.Functor.fmap(&Kare.curry/1)
+      (&Kare.curry/1)
+      |> Category.TypeClass.Functor.fmap(mf)
       |> mod.applicative_ap(it)
     end
   end
