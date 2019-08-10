@@ -8,7 +8,7 @@ defmodule Category.TypeClass.Functor do
   defmacro fmap(it, f) do
     quote location: :keep, bind_quoted: [it: it, f: f] do
       {:module, mod} = :erlang.fun_info(it, :module)
-      mod.functor_fmap(it, f)
+      mod.functor_fmap(it, Kare.curry(f))
     end
   end
 

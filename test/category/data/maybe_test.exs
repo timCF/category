@@ -86,4 +86,36 @@ defmodule Category.Data.MaybeTest do
     n3 = Monad.bind(n1, fn _ -> raise("BANG!!!") end)
     assert Maybe.is_nothing?(n3)
   end
+
+  test "ap just", %{just: j0} do
+    assert Maybe.is?(j0)
+    assert 1 == Maybe.fetch!(j0)
+
+    j1 =
+      (&Kernel.+/2)
+      |> Maybe.just()
+      |> Applicative.ap(j0)
+      |> Applicative.ap(j0)
+
+    assert Maybe.is_just?(j1)
+    assert 2 == Maybe.fetch!(j1)
+  end
+
+  test "ap just + nothing", %{just: just, nothing: nothing} do
+    x0 =
+      (&Kernel.+/2)
+      |> Maybe.just()
+      |> Applicative.ap(nothing)
+      |> Applicative.ap(just)
+
+    assert Maybe.is_nothing?(x0)
+
+    x1 =
+      (&Kernel.+/2)
+      |> Maybe.just()
+      |> Applicative.ap(just)
+      |> Applicative.ap(nothing)
+
+    assert Maybe.is_nothing?(x1)
+  end
 end

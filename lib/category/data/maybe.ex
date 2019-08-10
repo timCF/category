@@ -47,6 +47,18 @@ defmodule Category.Data.Maybe do
         justp(x) -> calculus(state: state, return: f.(x))
         nothingp() -> calculus(state: state, return: nothing())
       end
+
+    {:applicative_ap, mf} ->
+      case is_just?(mf) do
+        true ->
+          case state do
+            justp(x) -> calculus(state: justp(fetch!(mf).(x)), return: :ok)
+            nothingp() -> calculus(state: state, return: :ok)
+          end
+
+        false ->
+          calculus(state: nothingp(), return: :ok)
+      end
   end
 
   @typep a :: Category.a()
@@ -76,4 +88,8 @@ defmodule Category.Data.Maybe do
   @behaviour Monad
   @impl true
   def monad_bind(it, f), do: it |> eval({:monad_bind, f}) |> return()
+
+  @behaviour Applicative
+  @impl true
+  def applicative_ap(mf, it), do: it |> eval({:applicative_ap, mf})
 end
