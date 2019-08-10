@@ -60,4 +60,30 @@ defmodule Category.Data.MaybeTest do
     n3 = Functor.fmap(n1, fn _ -> raise("BANG!!!") end)
     assert Maybe.is_nothing?(n3)
   end
+
+  test "bind just", %{just: j0} do
+    assert Maybe.is?(j0)
+    assert 1 == Maybe.fetch!(j0)
+
+    j1 = Monad.bind(j0, &Maybe.just(&1 * 3))
+    assert Maybe.is?(j1)
+    assert 3 == Maybe.fetch!(j1)
+
+    j2 = Monad.bind(j1, fn _ -> Maybe.nothing() end)
+    assert Maybe.is?(j2)
+    assert Maybe.is_nothing?(j2)
+  end
+
+  test "bind nothing", %{nothing: n0} do
+    assert Maybe.is_nothing?(n0)
+
+    n1 = Monad.bind(n0, &Maybe.just(&1 * 3))
+    assert Maybe.is_nothing?(n1)
+
+    n2 = Monad.bind(n1, fn _ -> Maybe.just(:hello) end)
+    assert Maybe.is_nothing?(n2)
+
+    n3 = Monad.bind(n1, fn _ -> raise("BANG!!!") end)
+    assert Maybe.is_nothing?(n3)
+  end
 end

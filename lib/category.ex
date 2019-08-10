@@ -5,7 +5,7 @@ defmodule Category do
 
   @opaque a :: __MODULE__.a()
   @opaque b :: __MODULE__.b()
-  @opaque f(x) :: __MODULE__.f(x)
+  @opaque t(x) :: __MODULE__.t(x)
 
   defmacro __using__(_) do
     quote location: :keep do

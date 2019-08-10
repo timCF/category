@@ -41,6 +41,12 @@ defmodule Category.Data.Maybe do
         justp(x) -> calculus(state: justp(f.(x)), return: :ok)
         nothingp() -> calculus(state: state, return: :ok)
       end
+
+    {:monad_bind, f} ->
+      case state do
+        justp(x) -> calculus(state: state, return: f.(x))
+        nothingp() -> calculus(state: state, return: nothing())
+      end
   end
 
   @typep a :: Category.a()
@@ -66,4 +72,8 @@ defmodule Category.Data.Maybe do
   @behaviour Functor
   @impl true
   def functor_fmap(it, f), do: it |> eval({:functor_fmap, f})
+
+  @behaviour Monad
+  @impl true
+  def monad_bind(it, f), do: it |> eval({:monad_bind, f}) |> return()
 end
