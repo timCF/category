@@ -64,6 +64,14 @@ defmodule Category.Data.MaybeTest do
     assert Maybe.is_nothing?(x1)
   end
 
+  test "failed bind", %{just: j} do
+    assert_raise RuntimeError,
+                 "Expected value of Category.Data.Maybe from function passed to Monad.bind, but got 1",
+                 fn ->
+                   j ~>> (& &1)
+                 end
+  end
+
   test "ap just", %{just: j} do
     x = (&Kernel.+/2) <|> j <~> j
     assert 2 == Maybe.fetch!(x)

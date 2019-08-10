@@ -87,7 +87,26 @@ defmodule Category.Data.Maybe do
 
   @behaviour Monad
   @impl true
-  def monad_bind(it, f), do: it |> eval({:monad_bind, f}) |> return()
+  def monad_bind(it, f) do
+    new_it =
+      it
+      |> eval({:monad_bind, f})
+      |> return()
+
+    new_it
+    |> is?()
+    |> case do
+      true ->
+        new_it
+
+      false ->
+        raise(
+          "Expected value of #{inspect(__MODULE__)} from function passed to Monad.bind, but got #{
+            inspect(new_it)
+          }"
+        )
+    end
+  end
 
   @behaviour Applicative
   @impl true
