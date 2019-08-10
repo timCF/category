@@ -88,16 +88,12 @@ defmodule Category.Data.MaybeTest do
   end
 
   test "ap just", %{just: j0} do
-    assert Maybe.is?(j0)
-    assert 1 == Maybe.fetch!(j0)
-
     j1 =
       (&Kernel.+/2)
       |> Maybe.just()
       |> Applicative.ap(j0)
       |> Applicative.ap(j0)
 
-    assert Maybe.is_just?(j1)
     assert 2 == Maybe.fetch!(j1)
   end
 
@@ -117,5 +113,14 @@ defmodule Category.Data.MaybeTest do
       |> Applicative.ap(nothing)
 
     assert Maybe.is_nothing?(x1)
+  end
+
+  test "can combine ap with fmap", %{just: just, nothing: nothing} do
+    x0 =
+      nothing
+      |> Functor.fmap(&Kernel.+/2)
+      |> Applicative.ap(just)
+
+    assert Maybe.is_nothing?(x0)
   end
 end
