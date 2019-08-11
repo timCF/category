@@ -11,6 +11,7 @@ defmodule Category do
     quote location: :keep do
       use Category.Data
       use Category.TypeClass, unquote(opts)
+      :ok
     end
   end
 end

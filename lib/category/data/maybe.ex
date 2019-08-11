@@ -17,7 +17,7 @@ defmodule Category.Data.Maybe do
 
   @fetch_error "Can't fetch from #{inspect(__MODULE__)}.nothing"
 
-  defcalculus state do
+  defcalculus state, export_return: false, generate_opaque: false do
     :fetch ->
       case state do
         justp(x) -> calculus(state: state, return: x)
@@ -62,23 +62,24 @@ defmodule Category.Data.Maybe do
   end
 
   @typep a :: Category.a()
+  @opaque t(a) :: Category.t(a)
 
-  @spec just(a) :: t
+  @spec just(a) :: t(a)
   def just(x), do: x |> justp() |> construct()
 
-  @spec nothing :: t
+  @spec nothing :: t(a)
   def nothing, do: nothingp() |> construct()
 
-  @spec fetch(t) :: a | nil
+  @spec fetch(t(a)) :: a | nil
   def fetch(it), do: it |> eval(:fetch) |> return()
 
-  @spec fetch!(t) :: a | no_return
+  @spec fetch!(t(a)) :: a | no_return
   def fetch!(it), do: it |> eval(:fetch!) |> return()
 
-  @spec is_just?(t) :: boolean
+  @spec is_just?(t(a)) :: boolean
   def is_just?(it), do: it |> eval(:is_just?) |> return()
 
-  @spec is_nothing?(t) :: boolean
+  @spec is_nothing?(t(a)) :: boolean
   def is_nothing?(it), do: it |> eval(:is_nothing?) |> return()
 
   @behaviour Functor

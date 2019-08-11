@@ -4,6 +4,7 @@ defmodule Category.TypeClass do
       use Category.TypeClass.Functor, unquote(opts)
       use Category.TypeClass.Monad, unquote(opts)
       use Category.TypeClass.Applicative, unquote(opts)
+      :ok
     end
   end
 
