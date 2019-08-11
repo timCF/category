@@ -12,7 +12,21 @@ defmodule Category.TypeClass.Monad do
     quote location: :keep do
       it = unquote(it)
       {:module, mod} = :erlang.fun_info(it, :module)
-      mod.monad_bind(it, unquote(f))
+      new_it = mod.monad_bind(it, unquote(f))
+
+      new_it
+      |> mod.is?()
+      |> case do
+        true ->
+          new_it
+
+        false ->
+          raise(
+            "Expected value of #{inspect(mod)} from function passed to Monad.bind, but got #{
+              inspect(new_it)
+            }"
+          )
+      end
     end
   end
 
