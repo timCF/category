@@ -19,7 +19,7 @@ defmodule Category.TypeClass.Applicative do
     end
   end
 
-  defmacro f <~> it do
+  defmacro f <<~ it do
     quote location: :keep do
       unquote(__MODULE__).ap(unquote(f), unquote(it))
     end

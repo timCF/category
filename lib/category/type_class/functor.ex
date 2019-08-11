@@ -19,7 +19,13 @@ defmodule Category.TypeClass.Functor do
     end
   end
 
-  defmacro f <|> it do
+  defmacro f <~ it do
+    quote location: :keep do
+      unquote(__MODULE__).fmap(unquote(f), unquote(it))
+    end
+  end
+
+  defmacro it ~> f do
     quote location: :keep do
       unquote(__MODULE__).fmap(unquote(f), unquote(it))
     end

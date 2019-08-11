@@ -16,7 +16,7 @@ defmodule Category.TypeClass.Monad do
     end
   end
 
-  defmacro it ~>> f do
+  defmacro it >>> f do
     quote location: :keep do
       unquote(__MODULE__).bind(unquote(it), unquote(f))
     end
