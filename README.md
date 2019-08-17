@@ -2,7 +2,7 @@
 
 Functors, monads, applicatives with real encapsulation
 
-<img src="priv/img/logo.jpeg" width="300"/>
+<img src="priv/img/logo.jpeg" width="225"/>
 
 ## Installation
 
