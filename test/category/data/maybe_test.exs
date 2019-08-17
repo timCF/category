@@ -20,24 +20,24 @@ defmodule Category.Data.MaybeTest do
     refute Maybe.is_nothing?(j)
   end
 
-  test "fetch", %{just: j, nothing: n} do
-    assert 1 == Maybe.fetch(j)
-    assert nil == Maybe.fetch(n)
+  test "get", %{just: j, nothing: n} do
+    assert 1 == Maybe.get(j)
+    assert nil == Maybe.get(n)
   end
 
-  test "fetch!", %{just: j, nothing: n} do
-    assert 1 == Maybe.fetch!(j)
+  test "get!", %{just: j, nothing: n} do
+    assert 1 == Maybe.get!(j)
 
     assert_raise RuntimeError,
-                 "Can't fetch from Category.Data.Maybe.nothing",
+                 "Can't get! from Category.Data.Maybe.nothing",
                  fn ->
-                   Maybe.fetch!(n)
+                   Maybe.get!(n)
                  end
   end
 
   test "fmap just", %{just: j} do
     x = (&(&1 * 3)) <~ j
-    assert 3 == Maybe.fetch!(x)
+    assert 3 == Maybe.get!(x)
   end
 
   test "fmap nothing", %{nothing: n} do
@@ -50,7 +50,7 @@ defmodule Category.Data.MaybeTest do
 
   test "flip fmap just", %{just: j} do
     x = j ~> (&(&1 * 3))
-    assert 3 == Maybe.fetch!(x)
+    assert 3 == Maybe.get!(x)
   end
 
   test "flip fmap nothing", %{nothing: n} do
@@ -63,7 +63,7 @@ defmodule Category.Data.MaybeTest do
 
   test "bind just", %{just: j} do
     x0 = j >>> (&Maybe.just(&1 * 3))
-    assert 3 == Maybe.fetch!(x0)
+    assert 3 == Maybe.get!(x0)
 
     x1 = j >>> fn _ -> Maybe.nothing() end
     assert Maybe.is_nothing?(x1)
@@ -87,7 +87,7 @@ defmodule Category.Data.MaybeTest do
 
   test "ap just", %{just: j} do
     x = (&Kernel.+/2) <~ j <<~ j
-    assert 2 == Maybe.fetch!(x)
+    assert 2 == Maybe.get!(x)
   end
 
   test "ap just + nothing", %{just: j, nothing: n} do

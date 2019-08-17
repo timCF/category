@@ -3,8 +3,8 @@ defmodule Category.Data.Maybe do
   use Category.TypeClass
 
   @moduledoc """
-  Classic sum type `Maybe`.
-  Implements Monad, Functor and Applicative behaviours.
+  Classic sum type `Maybe`
+  Implements Monad, Functor and Applicative behaviours
   """
 
   defmacrop justp(x) do
@@ -15,19 +15,19 @@ defmodule Category.Data.Maybe do
 
   defmacrop nothingp, do: :nothingp
 
-  @fetch_error "Can't fetch from #{inspect(__MODULE__)}.nothing"
+  @get_error "Can't get! from #{inspect(__MODULE__)}.nothing"
 
   defcalculus state, export_return: false, generate_opaque: false do
-    :fetch ->
+    :get ->
       case state do
         justp(x) -> calculus(state: state, return: x)
         nothingp() -> calculus(state: state, return: nil)
       end
 
-    :fetch! ->
+    :get! ->
       case state do
         justp(x) -> calculus(state: state, return: x)
-        nothingp() -> raise(@fetch_error)
+        nothingp() -> raise(@get_error)
       end
 
     method when method in [:is_just?, :is_nothing?] ->
@@ -52,7 +52,7 @@ defmodule Category.Data.Maybe do
       case is_just?(mf) do
         true ->
           case state do
-            justp(x) -> calculus(state: justp(fetch!(mf).(x)), return: :ok)
+            justp(x) -> calculus(state: justp(get!(mf).(x)), return: :ok)
             nothingp() -> calculus(state: state, return: :ok)
           end
 
@@ -61,24 +61,106 @@ defmodule Category.Data.Maybe do
       end
   end
 
-  @typep a :: Category.a()
-  @opaque t(a) :: Category.t(a)
+  @typep a :: term
+  @opaque t(a) :: t(a)
 
+  @doc """
+  First constructor
+
+  ## Examples
+
+  ```
+  iex> x = Maybe.just(1)
+  iex> Maybe.is_just?(x)
+  true
+  ```
+  """
   @spec just(a) :: t(a)
   def just(x), do: x |> justp() |> construct()
 
+  @doc """
+  Second constructor
+
+  ## Examples
+
+  ```
+  iex> x = Maybe.nothing()
+  iex> Maybe.is_nothing?(x)
+  true
+  ```
+  """
   @spec nothing :: t(a)
   def nothing, do: nothingp() |> construct()
 
-  @spec fetch(t(a)) :: a | nil
-  def fetch(it), do: it |> eval(:fetch) |> return()
+  @doc """
+  If argument is `just(a)` then returns `a`, otherwise returns `nil`
 
-  @spec fetch!(t(a)) :: a | no_return
-  def fetch!(it), do: it |> eval(:fetch!) |> return()
+  ## Examples
 
+  ```
+  iex> j = Maybe.just(1)
+  iex> n = Maybe.nothing()
+  iex> Maybe.get(j)
+  1
+  iex> Maybe.get(n)
+  nil
+  ```
+  """
+  @spec get(t(a)) :: a | nil
+  def get(it), do: it |> eval(:get) |> return()
+
+  @doc """
+  If argument is `just(a)` then returns `a`, otherwise raise exception
+
+  ## Examples
+
+  ```
+  iex> j = Maybe.just(1)
+  iex> n = Maybe.nothing()
+  iex> Maybe.get!(j)
+  1
+  iex> Maybe.get!(n)
+  ** (RuntimeError) Can't get! from Category.Data.Maybe.nothing
+  ```
+  """
+  @spec get!(t(a)) :: a | no_return
+  def get!(it), do: it |> eval(:get!) |> return()
+
+  @doc """
+  If argument is `just(a)` then returns `true`
+  If argument is `nothing()` then returns `false`
+  Otherwise raise exception
+
+  ## Examples
+
+  ```
+  iex> j = Maybe.just(1)
+  iex> n = Maybe.nothing()
+  iex> Maybe.is_just?(j)
+  true
+  iex> Maybe.is_just?(n)
+  false
+  ```
+  """
   @spec is_just?(t(a)) :: boolean
   def is_just?(it), do: it |> eval(:is_just?) |> return()
 
+  @doc """
+  If argument is `nothing()` then returns `true`
+  If argument is `just(a)` then returns `false`
+  Otherwise raise exception
+
+  ## Examples
+
+  ```
+  iex> j = Maybe.just(1)
+  iex> n = Maybe.nothing()
+  iex> Maybe.is_nothing?(n)
+  true
+  iex> Maybe.is_nothing?(j)
+  false
+  ```
+  """
   @spec is_nothing?(t(a)) :: boolean
   def is_nothing?(it), do: it |> eval(:is_nothing?) |> return()
 

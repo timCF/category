@@ -2,9 +2,9 @@ defmodule Category.TypeClass.Functor do
   import Category.TypeClass
   define_using()
 
-  @typep a :: Category.a()
-  @typep b :: Category.b()
-  @typep t(x) :: Category.t(x)
+  @typep a :: term
+  @typep b :: term
+  @typep t(x) :: __MODULE__.t(x)
 
   @callback functor_fmap((a -> b), t(a)) :: t(b)
 
