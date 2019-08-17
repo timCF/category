@@ -4,7 +4,7 @@ defmodule Category.TypeClass.Applicative do
 
   @typep a :: term
   @typep b :: term
-  @typep t(x) :: __MODULE__.t(x)
+  @type t(x) :: __MODULE__.t(x)
 
   @callback applicative_ap(t((a -> b)), t(a)) :: t(b)
 

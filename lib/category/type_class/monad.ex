@@ -4,7 +4,7 @@ defmodule Category.TypeClass.Monad do
 
   @typep a :: term
   @typep b :: term
-  @typep t(x) :: __MODULE__.t(x)
+  @type t(x) :: __MODULE__.t(x)
 
   @callback monad_bind(t(a), (a -> t(b))) :: t(b)
 
@@ -21,11 +21,7 @@ defmodule Category.TypeClass.Monad do
           new_it
 
         false ->
-          raise(
-            "Expected value of #{inspect(mod)} from function passed to Monad.bind, but got #{
-              inspect(new_it)
-            }"
-          )
+          raise("Expected value of #{inspect(mod)} from function passed to Monad.bind, but got #{inspect(new_it)}")
       end
     end
   end

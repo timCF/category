@@ -4,7 +4,7 @@ defmodule Category.TypeClass.Functor do
 
   @typep a :: term
   @typep b :: term
-  @typep t(x) :: __MODULE__.t(x)
+  @type t(x) :: __MODULE__.t(x)
 
   @callback functor_fmap((a -> b), t(a)) :: t(b)
 
