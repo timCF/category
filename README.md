@@ -1,11 +1,12 @@
 # Category
 
-**TODO: Add description**
+Functors, monads, applicatives with real encapsulation
+
+<img src="priv/img/logo.jpeg" width="300"/>
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `category` to your list of dependencies in `mix.exs`:
+The package can be installed by adding `category` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
@@ -15,7 +16,21 @@ def deps do
 end
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/category](https://hexdocs.pm/category).
+## Translation Table
 
+| Type Class  | Function  | Haskell | Elixir |
+|-------------|-----------|---------|--------|
+| Functor     | fmap      |   <$>   |   <~   |
+| Functor     | flip fmap |   <&>   |   ~>   |
+| Monad       | bind      |   >>=   |   >>>  |
+| Applicative | ap        |   <*>   |   <<~  |
+
+<br>
+<p align="center">
+  <tt>
+    Made with ❤️ by
+    <a href="https://itkach.uk" target="_blank">Ilja Tkachuk</a>
+    aka
+    <a href="https://github.com/timCF" target="_blank">timCF</a>
+  </tt>
+</p>
