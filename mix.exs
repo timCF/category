@@ -34,7 +34,7 @@ defmodule Category.MixProject do
       homepage_url: "https://github.com/timCF/category",
       docs: [main: "readme", extras: ["README.md"]],
       # hex.pm stuff
-      description: "Functors, monads, applicatives with real encapsulation",
+      description: "Functors, Monads and Applicatives with real encapsulation",
       package: [
         licenses: ["MIT"],
         files: ["lib", "priv", "mix.exs", "README*", "VERSION*"],

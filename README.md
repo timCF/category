@@ -1,6 +1,6 @@
 # Category
 
-Functors, monads, applicatives with real encapsulation
+Functors, Monads and Applicatives with real encapsulation
 
 <img src="priv/img/logo.jpeg" width="225"/>
 
